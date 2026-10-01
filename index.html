@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🇵🇹 포르투갈 가족 여행 스마트 가이드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1A365D;
+      --secondary: #C53030;
+      --accent: #D69E2E;
+      --flight-bg: #2C3E50;
+      --bg: #F4F6F9;
+      --card-bg: #FFFFFF;
+      --text: #2D3748;
+      --subtext: #718096;
+      --border: #E2E8F0;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 70px;
+    }
+    header {
+      background: linear-gradient(135deg, #1A365D 0%, #2B6CB0 100%);
+      color: white;
+      padding: 34px 20px 22px;
+      text-align: center;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    h1 { font-size: 23px; font-weight: 800; margin-bottom: 4px; }
+    header p { font-size: 14px; opacity: 0.9; }
+
+    /* 날짜 네비게이션 스크롤 탭 */
+    .nav-container {
+      position: sticky;
+      top: 0;
+      background: rgba(244, 246, 249, 0.96);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-scroll::-webkit-scrollbar { display: none; }
+    .nav-btn {
+      flex: 0 0 auto;
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--subtext);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(26, 54, 93, 0.25);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .day-content { display: none; animation: fadeIn 0.3s ease; }
+    .day-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .day-header {
+      margin-bottom: 18px;
+      padding: 16px 18px;
+      background: white;
+      border-radius: var(--radius);
+      border-left: 5px solid var(--secondary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .day-title { font-size: 19px; font-weight: 800; color: var(--primary); }
+    .day-desc { font-size: 13.5px; color: var(--subtext); margin-top: 4px; }
+
+    /* 항공권 카드 */
+    .flight-ticket {
+      background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .flight-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed rgba(255,255,255,0.25);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .flight-route {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .flight-stop { text-align: center; }
+    .flight-code { font-size: 20px; font-weight: 800; }
+    .flight-time { font-size: 14px; font-weight: 600; color: #E2E8F0; }
+    .flight-name { font-size: 11px; color: #94A3B8; }
+    .flight-arrow { font-size: 16px; color: var(--accent); }
+    .flight-details {
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    /* 타임라인 카드 */
+    .timeline { position: relative; padding-left: 20px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: #CBD5E0;
+    }
+    .timeline-item { position: relative; margin-bottom: 20px; }
+    .timeline-dot {
+      position: absolute;
+      left: -20px;
+      top: 14px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid var(--primary);
+      box-sizing: border-box;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+    }
+    .card-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin: 10px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .time-tag {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-bottom: 4px;
+      display: inline-block;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .card-text {
+      font-size: 13.5px;
+      color: #4A5568;
+      line-height: 1.55;
+    }
+
+    /* 액션 링크 버튼들 */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .map-btn {
+      background: #EBF8FF;
+      color: #2B6CB0;
+      border: 1px solid #BEE3F8;
+    }
+    .tour-btn {
+      background: #FFF5F5;
+      color: #C53030;
+      border: 1px solid #FED7D7;
+    }
+    .reserve-btn {
+      background: #F0FFF4;
+      color: #276749;
+      border: 1px solid #C6F6D5;
+    }
+    .action-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    .food-subcard {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: #F7FAFC;
+      border-radius: 10px;
+      border: 1px solid #EDF2F7;
+    }
+    .food-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #2D3748;
+      margin-bottom: 2px;
+    }
+    .food-desc {
+      font-size: 12.5px;
+      color: #718096;
+      line-height: 1.45;
+    }
+
+    .tip-box {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: #FEFCBF;
+      border-radius: 10px;
+      font-size: 12.5px;
+      color: #744210;
+      display: flex;
+      gap: 6px;
+    }
+
+    /* 옵션 스위치 */
+    .option-switch {
+      display: flex;
+      background: #EDF2F7;
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    .opt-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--subtext);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .opt-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .opt-content { display: none; }
+    .opt-content.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge">OCT 2 - OCT 11, 2026</div>
+    <h1>🇵🇹 포르투갈 가족 여행</h1>
+    <p>식당 예약 링크 · 구글맵 · 투어 연동 풀 패키지 가이드</p>
+  </header>
+
+  <!-- 가로 스크롤 날짜 탭 -->
+  <div class="nav-container">
+    <div class="nav-scroll" id="navScroll">
+      <button class="nav-btn active" onclick="switchDay(1)">Day 1 (10/2)</button>
+      <button class="nav-btn" onclick="switchDay(2)">Day 2 (10/3)</button>
+      <button class="nav-btn" onclick="switchDay(3)">Day 3 (10/4)</button>
+      <button class="nav-btn" onclick="switchDay(4)">Day 4 (10/5)</button>
+      <button class="nav-btn" onclick="switchDay(5)">Day 5 (10/6)</button>
+      <button class="nav-btn" onclick="switchDay(6)">Day 6 (10/7)</button>
+      <button class="nav-btn" onclick="switchDay(7)">Day 7 (10/8)</button>
+      <button class="nav-btn" onclick="switchDay(8)">Day 8 (10/9)</button>
+      <button class="nav-btn" onclick="switchDay(9)">Day 9 (10/10)</button>
+      <button class="nav-btn" onclick="switchDay(10)">Day 10 (10/11)</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- DAY 1 -->
+    <div class="day-content active" id="day-1">
+      <div class="day-header">
+        <div class="day-title">10월 2일 (금) | 출국 (인천 1터미널)</div>
+        <div class="day-desc">에티하드항공을 타고 아부다비를 경유해 리스본으로 향하는 날</div>
+      </div>
+
+      <!-- 출국 항공권 카드 -->
+      <div class="flight-ticket">
+        <div class="flight-header">
+          <span>✈️️ 에티하드항공 EY 823 / EY 99</span>
+          <span>총 소요 21시간</span>
+        </div>
+        <div class="flight-route">
+          <div class="flight-stop">
+            <div class="flight-code">ICN T1</div>
+            <div class="flight-time">18:20</div>
+            <div class="flight-name">인천 1터미널</div>
+          </div>
+          <div class="flight-arrow">➔ 9h 45m ➔</div>
+          <div class="flight-stop">
+            <div class="flight-code">AUH T-A</div>
+            <div class="flight-time">23:05</div>
+            <div class="flight-name">아부다비 도착</div>
+          </div>
+        </div>
+        <div class="flight-details">
+          • <strong>환승 시간:</strong> 아부다비 공항(AUH) 3시간 대기 (여유로움)<br>
+          • <strong>환승편:</strong> 10/3 02:05 출발 (EY 99, B787-9) ➔ <strong>07:20 리스본 도착</strong><br>
+          • <strong>기내 옵션:</strong> Wi-Fi, 전원 어댑터, USB 충전 지원
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">15:00 - 15:30</span>
+            <div class="card-title">인천국제공항 제1여객터미널 집결</div>
+            <div class="card-text">
+              • <strong>중요:</strong> 제1터미널(T1) 에티하드항공 카운터 확인 후 수속<br>
+              • 수하물 최종 목적지(리스본 LIS) 자동 연결 확인<br>
+              • 면세구역 인도장 수령 및 로밍/이심 최종 점검
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">18:20</span>
+            <div class="card-title">인천 출발 (EY 823, A350-1000)</div>
+            <div class="card-text">장시간 비행 시작! 기내용 슬리퍼 착용과 충분한 수분 섭취로 시차 적응 준비.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day-content" id="day-2">
+      <div class="day-header">
+        <div class="day-title">10월 3일 (토) | 리스본 도착 & 올드타운 투어 & LOCO 디너</div>
+        <div class="day-desc">아침 일찍 도착해 여유를 즐긴 뒤, 투어와 미슐랭 1스타 디너로 이어집니다.</div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">07:20 - 09:00</span>
+            <div class="card-title">리스본 공항 1터미널 도착 & 호텔 이동</div>
+            <div class="card-text">
+              • 입국 심사 및 수하물 수령 후 픽업 기사 미팅<br>
+              • [HF Fénix Lisboa] 호텔 이동 (09:00경 도착)<br>
+              • 체크인 확인 (얼리체크인 불가 시 짐 보관)
+            </div>
+            <div class="btn-group">
+              <a href="https://maps.google.com/?q=HF+Fenix+Lisboa" target="_blank" class="action-btn map-btn">📍 호텔 구글맵 위치</a>
+            </div>
+            <div class="tip-box">
+              <span>💡</span>
+              <span><strong>보너스 시간:</strong> 비행기가 07:20에 도착하여 오후 1:30 투어까지 <strong>4시간 이상의 여유</strong>가 생겼습니다! 호텔 인근 카페에서 따뜻한 커피와 빵으로 여유롭게 피로를 푸세요.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 점심/브런치 옵션 카드 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">11:30 - 13:00 (점심 브런치 옵션)</span>
+            <div class="card-title">치아두 / 카몽이스 광장 브런치 & 카페 추천</div>
+            <div class="card-text">투어 집결지(카몽이스 광장) 도보 3~5분 내 추천 명소 중 택1:</div>
+            
+            <div class="food-subcard">
+              <div class="food-title">① Café A Brasileira (역사적인 명소)</div>
+              <div class="food-desc">1905년에 문을 연 리스본의 상징. 페르난두 페소아 동상 앞 포토존 & 토스트/에스프레소 (워크인 전용)</div>
+              <div class="btn-group">
+                <a href="https://maps.google.com/?q=Café+A+Brasileira+Chiado+Lisbon" target="_blank" class="action-btn map-btn">📍 위치 구글맵</a>
+              </div>
+            </div>
+
+            <div class="food-subcard">
+              <div class="food-title">② Dear Breakfast - Bica (사전 예약 가능)</div>
+              <div class="food-desc">비카선 트램 골목 바로 옆, 아치형 천장이 예쁜 감성 브런치 맛집 (에그 베네딕트/팬케이크)</div>
+              <div class="btn-group">
+                <a href="https://maps.google.com/?q=Dear+Breakfast+Bica+Lisbon" target="_blank" class="action-btn map-btn">📍 위치 구글맵</a>
+                <a href="https://www.dearbreakfast.com/" target="_blank" class="action-btn reserve-btn">🍽️ 테이블 예약하기</a>
+              </div>
+            </div>
+
+            <div class="food-subcard">
+              <div class="food-title">③ Seagull Method Cafe (신선한 플레이팅)</div>
+              <div class="food-desc">가족 모두 호불호 없는 아보카도 토스트와 프렌치 토스트 맛집 (워크인 추천, 대기 있을 수 있음)</div>
+              <div class="btn-group">
+                <a href="https://maps.google.com/?q=Seagull+Method+Cafe+Lisbon" target="_blank" class="action-btn map-btn">📍 위치 구글맵</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">13:30 - 18:00</span>
+            <div class="card-title">리스본 시내투어 2부 (올드타운 코스)</div>
+            <img class="card-img" src="https://images.unsplash.com/photo-1513581166391-887a96ddeafd?auto=format&fit=crop&w=800&q=80" alt="Lisbon Tram">
+            <div class="card-text">
+              • <strong>집결:</strong> 카몽이스 광장 동상 앞 (13:30)<br>
+              • <strong>코스:</strong> 카르무 수도원 → 호시우 광장 → 상 도밍구스 성당 → 아우구스타 거리 → 대성당 → 포르타스 두 솔 전망대 (18:00경 해산)<br>
+              • 돌바닥 언덕길이 있으니 어머니 보폭에 맞춰 천천히 산책하세요.
+            </div>
+            <div class="btn-group">
+              <a href="https://maps.google.com/?q=Praça+Luís+de+Camões+Lisbon" target="_blank" class="action-btn map-btn">📍 집결지(카몽이스 광장) 구글맵</a>
+              <a href="https://experiences.myrealtrip.com/products/4353380" target="_blank" class="action-btn tour-btn">🔗 시내투어 페이지 보기</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">19:15 - 22:00</span>
+            <div class="card-title">LOCO Restaurante 미슐랭 1스타 디너</div>
+            <div class="card-text">투어 종료 후 호텔에서 단장 후 18:55 우버 탑승. 창의적인 로컬 식재료 테이스팅 코스를 만끽합니다.</div>
+            <div class="btn-group">
+              <a href="https://maps.google.com/?q=Loco+Restaurante+Lisbon" target="_blank" class="action-btn map-btn">📍 LOCO 구글맵 위치</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 3 -->
+    <div class="day-content" id="day-3">
+      <div class="day-header">
+        <div class="day-title">10월 4일 (일) | 리스본 근교 전일 투어</div>
+        <div class="day-desc">호카곶, 신트라, 오비두스, 나자레를 하루에 만나는 하이라이트</div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">07:40</span>
+            <div class="card-title">헤스타우라도레스 광장 망고(Mango) 매장 앞 집결</div>
+            <div class="card-text">호텔에서 우버로 5분 거리. 07:15경 로비에서 출발하세요.</div>
+            <div class="btn-group">
+              <a href="https://maps.google.com/?q=Mango+Restauradores+Lisbon" target="_blank" class="action-btn map-btn">📍 망고 매장 앞 구글맵</a>
+              <a href="https://experiences.myrealtrip.com/products/3427286" target="_blank" class="action-btn tour-btn">🔗 근교투어 페이지 보기</a>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">08:30 - 09:00</span>
+            <div class="card-title">호카 곶 (Cabo da Roca)</div>
+            <img class="card-img" src="https://images.unsplash.com/photo-1508672019048-805b876b67e2?auto=format&fit=crop&w=800&q=80" alt="Cabo da Roca">
+            <div class="card-text">유라시아 대륙 최서단 절벽. 단체객 없는 이른 아침의 웅장한 바다 풍경. (바람이 세니 외투 착용 필수)</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">10:10 - 11:00</span>
+            <div class="card-title">신트라 페나 국립 왕궁 외관 & 테라스</div>
+            <img class="card-img" src="https://images.unsplash.com/photo-1589308078059-be1415eab4c3?auto=format&fit=crop&w=800&q=80" alt="Pena Palace">
+            <div class="card-text">원색의 낭만주의 건축과 산 위의 테라스 정원 조망.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">13:10 - 15:10</span>
+            <div class="card-title">오비두스 (Óbidos) 중식 & 꽃길 산책</div>
+            <img class="card-img" src="https://images.unsplash.com/photo-1569949381669-ecf31ae8e613?auto=format&fit=crop&w=800&q=80" alt="Obidos Portugal">
+            <div class="card-text">흰 벽과 부겐빌레아 꽃길 성곽 산책 & 초콜릿 잔 체리주(진자) 시음.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">16:10 - 17:10</span>
+            <div class="card-title">나자레 (Nazaré) 절벽 전망대</div>
+            <div class="card-text">시티우(Sítio) 절벽에서 바라보는 대서양 거대 파도와 백사장 전경.</div>
+          </div>
+        </div>
+        
+        <!-- 저녁 식당 옵션 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">19:00 ~ (투어 종료 후 저녁)</span>
+            <div class="card-title">헤스타우라도레스 광장 인근 저녁 식사 추천</div>
+            <div class="card-text">투어 종료지점 망고 매장 바로 앞 도보 2분 거리 해산물 명소:</div>
+            
+            <div class="food-subcard">
+              <div class="food-title">Restaurante Pinóquio (터줏대감 해산물 맛집)</div>
+              <div class="food-desc">고수 향 가득한 마늘 조개찜(Amêijoas à Bulhão Pato), 마늘 버터 새우구이, 부드러운 안심 스테이크</div>
+              <div class="btn-group">
+                <a href="https://maps.google.com/?q=Restaurante+Pinóquio+Lisbon" target="_blank" class="action-btn map-btn">📍 피노키우 구글맵</a>
+                <a href="https://maps.google.com/?q=Restaurante+Pinóquio+Lisbon" target="_blank" class="action-btn reserve-btn">🍽️ 구글 예약 확인하기</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 4 -->
+    <div class="day-content" id="day-4">
+      <div class="day-header">
+        <div class="day-title">10월 5일 (월) | 벨렝지구 투어 & 오후 여유</div>
+        <div class="day-desc">원조 에그타르트와 함께하는 강변 산책 & 휴식</div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">08:05</span>
+            <div class="card-title">호텔 출발 → 벨렝 이동 (우버 15분)</div>
+            <div class="card-text">08:30 벨렝 투어 시작 시간에 맞춰 08:05~08:10 사이 우버 탑승.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">08:30 - 11:00</span>
+            <div class="card-title">리스본 시내투어 1부 (벨렝 코스)</div>
+            <img class="card-img" src="https://images.unsplash.com/photo-1588614959060-4d144f28b207?auto=format&fit=crop&w=800&q=80" alt="Belem Tower">
+            <div class="card-text">
+              • <strong>집결:</strong> 파스테이스 드 벨렝 앞 (원조 에그타르트 & 커피)<br>
+              • <strong>코스:</strong> 제로니무스 수도원 외관 → 발견기념비 → 벨렝탑 (11:00경 해산)<br>
+              • 평지 산책로 위주라 어머니도 편안하게 둘러보실 수 있습니다.
+            </div>
+            <div class="btn-group">
+              <a href="https://maps.google.com/?q=Pasteis+de+Belem" target="_blank" class="action-btn map-btn">📍 파스테이스 드 벨렝 구글맵</a>
+              <a href="https://experiences.myrealtrip.com/products/4353380" target="_blank" class="action-btn tour-btn">🔗 벨렝투어 페이지 보기</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 점심 식사 옵션 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">11:30 - 13:30 (점심 식사)</span>
+            <div class="card-title">LX Factory 점심 & 서점 산책</div>
+            <div class="food-subcard">
+              <div class="food-title">Cantina LX (화덕 요리 & 파스타)</div>
+              <div class="food-desc">옛 방직공장 분위기를 살린 빈티지 레스토랑. 화덕 대구 요리와 문어 스테이크 점심 후 Ler Devagar 서점 구경.</div>
+              <div class="btn-group">
+                <a href="https://maps.google.com/?q=Cantina+LX+Lisbon" target="_blank" class="action-btn map-btn">📍 위치 구글맵</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">14:00 - 16:30</span>
+            <div class="card-title">호텔 복귀 후 낮잠 & 휴식</div>
+            <div class="card-text">다음 날 포르투 장거리 운전을 대비해 체력을 충분히 비축하세요!</div>
+          </div>
+        </div>
+
+        <!-- 저녁 식사 옵션 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">18:00 ~ (자유대로 저녁 식사)</span>
+            <div class="card-title">리스본 전통 명가 저녁 식사 추천</div>
+            <div class="food-subcard">
+              <div class="food-title">Solar dos Presuntos (부모님 만족도 1위 전통 레스토랑)</div>
+              <div class="food-desc">포르투갈 북부 미뇨 지방 전통 요리 전문점. 진한 국물의 문어 밥(Arroz de Polvo)과 최상급 하몽 플래터.</div>
+              <div class="btn-group">
+                <a href="https://maps.google.com/?q=Solar+dos+Presuntos+Lisbon" target="_blank" class="action-btn map-btn">📍 위치 구글맵</a>
+                <a href="https://www.solardospresuntos.com/" target="_blank" class="action-btn reserve-btn">🍽️ 공식 예약하기 (필수)</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 5 -->
+    <div class="day-content" id="day-5">
+      <div class="day-header">
+        <div class="day-title">10월 6일 (화) | 리스본 → 포르투 이동</div>
+        <div class="day-desc">4일에 오비두스를 다녀왔으므로, 아래 2개 옵션 중 선택해 이동하세요!</div>
+      </div>
+
+      <!-- 옵션 선택 탭 -->
+      <div class="option-switch">
+        <button class="opt-btn active" id="btn-opt-a" onclick="switchOption('a')">✨ 옵션 A: 코스타 노바 & 아베이루 (추천)</button>
+        <button class="opt-btn" id="btn-opt-b" onclick="switchOption('b')">⛪ 옵션 B: 파티마 & 코임브라</button>
+      </div>
+
+      <!-- 옵션 A 컨텐츠 -->
+      <div class="opt-content active" id="content-opt-a">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="time-tag">09:30 - 12:00</span>
+              <div class="card-title">리스본 출발 → 코스타 노바 이동 (2시간 20분)</div>
+              <img class="card-img" src="https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=800&q=80" alt="Costa Nova Striped Houses">
+              <div class="card-text">줄무늬 전통 가옥 앞에서 가족 사진 촬영 & 대서양 백사장 산책.</div>
+              <div class="btn-group">
+                <a href="https://www.google.com/maps/dir/Lisbon/Praia+da+Costa+Nova/Aveiro/Pestana+A+Brasileira,+Porto" target="_blank" class="action-btn map-btn">🚗 옵션 A 전체 드라이브 경로 지도</a>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="time-tag">13:00 - 15:00</span>
+              <div class="card-title">아베이루 운하 점심 식사 (차로 15분)</div>
+              <div class="card-text">수로 테라스에서 해산물 밥 점심 & 전통 과자 오보스 몰레스 맛보기.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 옵션 B 컨텐츠 -->
+      <div class="opt-content" id="content-opt-b">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="time-tag">09:30 - 10:50</span>
+              <div class="card-title">리스본 출발 → 파티마 이동 (1시간 15분)</div>
+              <div class="card-text">성모 발현 바실리카 대성당 및 광장 참배, 평화로운 성지 산책.</div>
+              <div class="btn-group">
+                <a href="https://www.google.com/maps/dir/Lisbon/Sanctuary+of+Our+Lady+of+Fátima/Coimbra/Pestana+A+Brasileira,+Porto" target="_blank" class="action-btn map-btn">🚗 옵션 B 전체 드라이브 경로 지도</a>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="card">
+              <span class="time-tag">12:50 - 14:30</span>
+              <div class="card-title">코임브라 중식 & 몬데구 강변 산책 (차로 45분)</div>
+              <div class="card-text">대학 도시 구도심 식당에서 구운 아기돼지 요리(레이탕) 등 전통 점심.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 포르투 공통 저녁 식당 -->
+      <div class="card" style="margin-top: 15px; border-left: 4px solid var(--accent);">
+        <span class="time-tag">17:30 ~ 21:30 (포르투 첫날 일몰 & 저녁)</span>
+        <div class="card-title">상벤투역 & 모루 정원 일몰 & 가이아 저녁</div>
+        <img class="card-img" src="https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=800&q=80" alt="Porto Sunset">
+        <div class="card-text">
+          • 호텔 앞 상벤투역 아줄레주 타일 벽화 감상<br>
+          • 동루이스 다리 상층을 건너 모루 정원에서 도루강 일몰 감상
+        </div>
+        <div class="food-subcard" style="margin-top: 10px;">
+          <div class="food-title">Vinum Restaurant & Wine Bar (포르투 최고의 야경 뷰)</div>
+          <div class="food-desc">그라함 와이너리 부속 테라스 레스토랑. 도루강과 구시가지 파노라마 뷰를 보며 즐기는 스테이크와 포트와인.</div>
+          <div class="btn-group">
+            <a href="https://maps.google.com/?q=Vinum+Restaurant+Porto" target="_blank" class="action-btn map-btn">📍 Vinum 구글맵</a>
+            <a href="https://www.vinumatgrahams.com/" target="_blank" class="action-btn reserve-btn">🍽️ 창가석 예약하기</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 6 -->
+    <div class="day-content" id="day-6">
+      <div class="day-header">
+        <div class="day-title">10월 7일 (수) | 포르투 역사 지구 & 와이너리 투어</div>
+        <div class="day-desc">볼량시장의 활기와 포트와인 저장고의 깊은 향기를 만나는 날</div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">09:30 - 11:30</span>
+            <div class="card-title">클레리고스 탑, 카르무 성당 & 렐루 서점</div>
+            <div class="card-text">카르무 성당의 푸른 아줄레주 외벽 포토존 산책 및 렐루 서점(방문 시 사전 예약 필수).</div>
+            <div class="btn-group">
+              <a href="https://www.livrarialello.pt/" target="_blank" class="action-btn tour-btn">🔗 렐루 서점 공식 예약 사이트</a>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">11:30 - 13:30</span>
+            <div class="card-title">볼량시장 (Mercado do Bolhão) 미식 점심</div>
+            <img class="card-img" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" alt="Market Food">
+            <div class="card-text">호텔 도보 5분 거리. 쾌적한 실내 전통시장에서 하몽, 치즈, 바칼라우 튀김, 미니 와인 타파스 런치.</div>
+            <div class="btn-group">
+              <a href="https://maps.google.com/?q=Mercado+do+Bolhão+Porto" target="_blank" class="action-btn map-btn">📍 볼량시장 구글맵</a>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">14:30 - 17:00</span>
+            <div class="card-title">테일러스(Taylor's) 포트와인 와이너리 & 테라스 카페</div>
+            <div class="card-text">오크통 저장고 관람(한국어 오디오 가이드 지원) 후 아름다운 테라스 정원에서 포트와인 시음.</div>
+            
+            <div class="food-subcard">
+              <div class="food-title">Barão Fladgate (테일러스 정원 테라스 레스토랑)</div>
+              <div class="food-desc">정원에 공작새가 노니는 뷰 명당. 투어 후 커피, 디저트 혹은 우아한 식사를 즐길 수 있는 스팟.</div>
+              <div class="btn-group">
+                <a href="https://maps.google.com/?q=Taylor's+Port+Cellars+Porto" target="_blank" class="action-btn map-btn">📍 테일러스 와이너리 구글맵</a>
+                <a href="https://www.baraofladgate.com/" target="_blank" class="action-btn reserve-btn">🍽️ 정원 테이블 예약</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 저녁 옵션 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">18:00 ~ (저녁 식사)</span>
+            <div class="card-title">포르투 도심 캐주얼 비스트로 저녁 추천</div>
+            <div class="food-subcard">
+              <div class="food-title">Cantinho do Avillez - Porto (미슐랭 2스타 셰프의 캐주얼 다이닝)</div>
+              <div class="food-desc">호텔(Pestana A Brasileira) 도보 3분 거리. 문어 구이, 송아지 타르타르 등 현대적으로 재해석한 포르투갈 퀴진.</div>
+              <div class="btn-group">
+                <a href="https://maps.google.com/?q=Cantinho+do+Avillez+Porto" target="_blank" class="action-btn map-btn">📍 위치 구글맵</a>
+                <a href="https://www.cantinhodoavillez.pt/" target="_blank" class="action-btn reserve-btn">🍽️ 온라인 테이블 예약</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 7 -->
+    <div class="day-content" id="day-7">
+      <div class="day-header">
+        <div class="day-title">10월 8일 (목) | 도루강 유람선 & 대서양 생선구이</div>
+        <div class="day-desc">강바람과 바닷바람을 맞으며 피로를 완전히 씻는 힐링 데이</div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">10:30 - 11:30</span>
+            <div class="card-title">도루강 6대 다리 유람선 (50분)</div>
+            <div class="card-text">히베이라 강변에서 전통 목선 탑승. 다리 피로 없이 편안히 앉아 포르투 절경 감상.</div>
+            <div class="btn-group">
+              <a href="https://maps.google.com/?q=Cais+da+Ribeira+Porto" target="_blank" class="action-btn map-btn">📍 히베이라 선착장 구글맵</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 점심 해산물 식당 옵션 -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">12:00 - 15:00 (점심 식사)</span>
+            <div class="card-title">마토지뉴시 (Matosinhos) 해변 & 그릴 생선구이</div>
+            <div class="card-text">우버로 20분 이동. 대서양 포구 마을의 신선한 생선구이 점심:</div>
+            
+            <div class="food-subcard">
+              <div class="food-title">O Gaveto (현지인들이 가장 인정하는 해산물 명가)</div>
+              <div class="food-desc">야외 숯불에서 굵은 소금을 뿌려 구워낸 그릴 농어(Robalo), 도미, 신선한 해산물 플래터.</div>
+              <div class="btn-group">
+                <a href="https://maps.google.com/?q=O+Gaveto+Matosinhos" target="_blank" class="action-btn map-btn">📍 O Gaveto 구글맵</a>
+                <a href="https://maps.google.com/?q=O+Gaveto+Matosinhos" target="_blank" class="action-btn reserve-btn">🍽️ 구글 예약 확인</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 8 -->
+    <div class="day-content" id="day-8">
+      <div class="day-header">
+        <div class="day-title">10월 9일 (금) | 포르투 → 리스본 오리엔테 이동</div>
+        <div class="day-desc">차량을 반납하고 공항 인근에 안착하는 날</div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">10:00 - 13:30</span>
+            <div class="card-title">포르투 출발 → 리스본 오리엔테 이동 (3시간 30분)</div>
+            <div class="card-text">중간 고속도로 휴게소 휴식 후 [Moov Hotel Lisboa Oriente] 체크인.</div>
+            <div class="btn-group">
+              <a href="https://maps.google.com/?q=Moov+Hotel+Lisboa+Oriente" target="_blank" class="action-btn map-btn">📍 오리엔테 호텔 구글맵</a>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">14:30 - 15:30</span>
+            <div class="card-title">렌트카 반납 (오리엔테역 or 공항)</div>
+            <div class="card-text">차량을 미리 반납해 두어 다음 날 새벽 출국 부담을 완전히 없앱니다!</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">15:30 ~ 21:00</span>
+            <div class="card-title">바스코 다 가마 쇼핑몰 & 나송이스 수변 공원</div>
+            <div class="card-text">호텔 도보 5분 거리 대형마트(Continente)에서 올리브유, 통조림 쇼핑 & 테주 강변에서 여행의 마지막 저녁 식사.</div>
+            <div class="btn-group">
+              <a href="https://maps.google.com/?q=Centro+Vasco+da+Gama+Lisbon" target="_blank" class="action-btn map-btn">📍 바스코 다 가마 몰 구글맵</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 9 -->
+    <div class="day-content" id="day-9">
+      <div class="day-header">
+        <div class="day-title">10월 10일 (토) | 귀국길 출발 (리스본 1터미널)</div>
+        <div class="day-desc">아름다웠던 포르투갈 일정을 마치고 비행기에 탑승하는 날</div>
+      </div>
+
+      <!-- 귀국 항공권 카드 -->
+      <div class="flight-ticket">
+        <div class="flight-header">
+          <span>✈️ 에티하드항공 EY 100 / EY 822</span>
+          <span>총 소요 18시간</span>
+        </div>
+        <div class="flight-route">
+          <div class="flight-stop">
+            <div class="flight-code">LIS T1</div>
+            <div class="flight-time">08:55</div>
+            <div class="flight-name">리스본 1터미널</div>
+          </div>
+          <div class="flight-arrow">➔ 7h 35m ➔</div>
+          <div class="flight-stop">
+            <div class="flight-code">AUH T-A</div>
+            <div class="flight-time">19:30</div>
+            <div class="flight-name">아부다비 도착</div>
+          </div>
+        </div>
+        <div class="flight-details">
+          • <strong>환승 시간:</strong> 1시간 45분 (시간이 다소 타이트하니 신속히 이동)<br>
+          • <strong>환승편:</strong> 21:15 아부다비 출발 (EY 822, A350-1000)<br>
+          • <strong>도착:</strong> <strong>10월 11일(일) 10:55 인천공항 1터미널 도착</strong>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">06:15 - 06:30</span>
+            <div class="card-title">호텔 체크아웃 & 공항 이동</div>
+            <div class="card-text">오리엔테 호텔에서 우버/택시로 리스본 공항 1터미널 이동 (단 5~8분 소요).</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">06:30 - 08:20</span>
+            <div class="card-title">수속 및 택스리펀 확인</div>
+            <div class="card-text">짐 부치기, 세관 텍스리펀 확인 후 탑승 게이트로 이동.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">08:55</span>
+            <div class="card-title">리스본 출발 (EY 100, B787-9)</div>
+            <div class="card-text">안전하고 편안한 귀국 비행 되세요! ✈️</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 10 -->
+    <div class="day-content" id="day-10">
+      <div class="day-header">
+        <div class="day-title">10월 11일 (일) | 인천 도착</div>
+        <div class="day-desc">따뜻한 추억을 가득 안고 집으로 복귀하는 날</div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="card">
+            <span class="time-tag">10:55</span>
+            <div class="card-title">인천국제공항 제1여객터미널(T1) 도착</div>
+            <div class="card-text">
+              • 입국 심사 및 수하물 수령<br>
+              • 대중교통/공항리무진 탑승 후 안전하게 귀가<br>
+              • 온 가족 모두 고생 많으셨습니다! 즐거운 여행 마무리되세요 ❤️
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function switchDay(dayNum) {
+      const btns = document.querySelectorAll('.nav-btn');
+      btns.forEach((btn, index) => {
+        btn.classList.toggle('active', index === (dayNum - 1));
+      });
+
+      const contents = document.querySelectorAll('.day-content');
+      contents.forEach(content => content.classList.remove('active'));
+      const activeContent = document.getElementById(`day-${dayNum}`);
+      if (activeContent) activeContent.classList.add('active');
+
+      const activeBtn = btns[dayNum - 1];
+      activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+      window.scrollTo({ top: 110, behavior: 'smooth' });
+    }
+
+    function switchOption(opt) {
+      const btnA = document.getElementById('btn-opt-a');
+      const btnB = document.getElementById('btn-opt-b');
+      const contentA = document.getElementById('content-opt-a');
+      const contentB = document.getElementById('content-opt-b');
+
+      if (opt === 'a') {
+        btnA.classList.add('active');
+        btnB.classList.remove('active');
+        contentA.classList.add('active');
+        contentB.classList.remove('active');
+      } else {
+        btnB.classList.add('active');
+        btnA.classList.remove('active');
+        contentB.classList.add('active');
+        contentA.classList.remove('active');
+      }
+    }
+  </script>
+</body>
+</html>
